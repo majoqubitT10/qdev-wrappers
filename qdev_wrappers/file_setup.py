@@ -19,6 +19,9 @@ CURRENT_EXPERIMENT["logging_enabled"] = False
 CURRENT_EXPERIMENT["init"] = False
 pdfdisplay = {}
 
+def clean_warning(message, category, filename, lineno, file=None, line=None):
+    return '%s:%s: %s:%s\n' % (filename, lineno, category.__name__, message)
+
 # aliases for keeping logging functions compatible
 def _set_up_ipython_logging():
     warnings.warn("The function _set_up_ipython_logging is deprecated and " +
@@ -202,7 +205,7 @@ def basic_init(sample_name: str, station, mainfolder: str= None, datafolder: str
 
 def all_init(sample_name: str, station, mainfolder: str= None, datafolder: str= "",
               display_png=True, display_pdf=True, display_individual_pdf=False,
-              annotate_image=False, subfolders=[]):
+              annotate_image=False, subfolders=[], pretty_warning=True):
     """Advanced experiment initialization.
     
     This function allows you to configure the initialization of an experiments.
@@ -220,6 +223,9 @@ def all_init(sample_name: str, station, mainfolder: str= None, datafolder: str= 
         annotate_image (booloan, optional): Whether to create device annotation images.
         subfolders (:obj:`list` of :obj:`str` , optional): List of additional subfolders to add. Default to [].
      """
+    if pretty_warning:
+        warnings.formatwarning = clean_warning
+    
     basic_init(sample_name, station, mainfolder, datafolder)
 
     if display_png:
